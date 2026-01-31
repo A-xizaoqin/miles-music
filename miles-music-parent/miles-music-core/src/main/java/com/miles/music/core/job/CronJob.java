@@ -1,0 +1,68 @@
+package com.miles.music.core.job;
+
+import com.miles.music.core.dto.UserDTO;
+import com.miles.music.core.service.PlayHistoryService;
+import com.miles.music.core.service.UserService;
+import com.miles.music.core.service.complex.SystemService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+
+/**
+ * @author Qimiao Chen
+ * @since 2025/4/12 15:19
+ **/
+@Component
+@Slf4j
+public class CronJob {
+
+    @Autowired
+    private SystemService systemService;
+
+    @Autowired
+    private UserService userService;
+
+    @Value("${qm.user.default.username}")
+    private String defaultUserName;
+
+    @Autowired
+    private PlayHistoryService playHistoryService;
+
+    @Value("${qm.refresh.auto}")
+    private Boolean autoRefresh;
+
+    @Value("${qm.clean.play.history.auto:true}")
+    private Boolean autoCleanPlayHistory;
+
+    @Value("${qm.save.play.history.month:24}")
+    private Integer savePlayHistoryMonth;
+
+    @Scheduled(cron = "0 8 */2 * * *")
+    public void refreshSongsCronJob() {
+        UserDTO userDTO = userService.findByUsername(defaultUserName);
+        if (userDTO != null && Boolean.TRUE.equals(userDTO.getForcePasswordChange())) {
+            // 初始化完成后，才会定时刷新歌曲
+            return;
+        }
+        if (Boolean.FALSE.equals(autoRefresh)) {
+            // 默认会自动刷新曲库，需要强制关闭
+            return;
+        }
+        systemService.refreshSongs();
+    }
+
+
+    @Scheduled(cron = "0 0 6 * * WED")
+    public void cleanPlayHistory() {
+        if (Boolean.FALSE.equals(autoCleanPlayHistory)) {
+            return;
+        }
+
+        playHistoryService.cleanPlayHistory(savePlayHistoryMonth);
+
+        log.info("clean play history ...");
+    }
+
+}
