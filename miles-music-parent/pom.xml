@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
     <name>miles-music</name>
     <description>Your Private Music Service</description>
-    <url>https://github.com/chenqimiao/miles-music</url>
+    <url>https://github.com/A-xizaoqin/miles-music</url>
     <licenses>
         <license>
             <name>Apache License, Version 2.0</name>
