@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  miles-music:
+    container_name: miles-music
+    # 使用 GitHub Container Registry 的镜像
+    image: ghcr.io/a-xizaoqin/miles-music:latest
+    ports:
+      - "6688:6688"
+    volumes:
+      # 默认使用当前目录下的 data 文件夹，方便直接启动
+      # 生产环境请修改为绝对路径，例如 /opt/miles-music/music
+      - ./data/music:/data/qm-music/music_dir
+      - ./data/db:/data/qm-music/db
+      - ./data/cache:/data/qm-music/cache
+    environment:
+      - QM_FFMPEG_ENABLE=true
+      - TZ=Asia/Shanghai
+      # 如果不需要 Spotify/Last.fm，保持为 false 即可
+      - QM_SPOTIFY_ENABLE=false
+      - QM_LASTFM_ENABLE=false
+      - QM_REFRESH_AUTO=true
+    restart: unless-stopped

@@ -67,27 +67,25 @@ docker run -d \
   qmmusic/qm-music:latest
 ```
 #### docker compose
-```bash
+推荐直接使用项目根目录下的 [docker-compose.yml](docker-compose.yml) 文件。
+
+```yaml
 version: '3'
 
 services:
-  qm-music:
-    container_name: qm-music
-    image: qmmusic/qm-music:latest
+  miles-music:
+    container_name: miles-music
+    image: ghcr.io/a-xizaoqin/miles-music:latest
     ports:
       - "6688:6688"
     volumes:
-      - [host_music_file_path]:/data/qm-music/music_dir
-      - [host_path_db_path]:/data/qm-music/db
-      - [host_path_cache_path]:/data/qm-music/cache 
+      # 请根据实际情况修改主机路径
+      - ./data/music:/data/qm-music/music_dir
+      - ./data/db:/data/qm-music/db
+      - ./data/cache:/data/qm-music/cache
     environment:
       - QM_FFMPEG_ENABLE=true
       - TZ=Asia/Shanghai
-      - QM_SPOTIFY_ENABLE=false
-      - QM_SPOTIFY_CLIENT_ID=[QM_SPOTIFY_CLIENT_ID]
-      - QM_SPOTIFY_CLIENT_SECRET=[QM_SPOTIFY_CLIENT_SECRET]
-      - QM_LASTFM_ENABLE=false
-      - QM_LASTFM_API_KEY=[QM_LASTFM_API_KEY]
       - QM_REFRESH_AUTO=true
     restart: unless-stopped
 ```
