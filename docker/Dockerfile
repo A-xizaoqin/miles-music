@@ -9,7 +9,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY qm-music-parent/ .
+COPY miles-music-parent/ .
 RUN mvn package -DskipTests && \
     rm -rf ~/.m2/repository  # 清理 Maven 本地仓库缓存
 
@@ -43,7 +43,7 @@ COPY --from=builder /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 
 # 复制应用和启动脚本
 WORKDIR /app
-COPY --from=builder /app/qm-music-app/target/*.jar ./app.jar
+COPY --from=builder /app/miles-music-app/target/*.jar ./app.jar
 COPY docker/entrypoint.sh /app/
 RUN chmod +x /app/entrypoint.sh
 
